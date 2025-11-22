@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doktor Dashboard - As-Salom Klinikasi</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/doktor.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="dashboard-container">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="main-content">
+            <div class="content-header">
+                <div class="doctor-welcome">
+                    <h1>Xush kelibsiz, <span th:text="${doktor.ism + ' ' + doktor.familiya}">Doktor Ismi</span>!</h1>
+                    <p class="doctor-specialty" th:text="${doktor.mutaxassislik}">Mutaxassislik</p>
+                </div>
+                <div class="breadcrumb">
+                    <span>Doktor</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="active">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Doktor statistik kartalari -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon today-patients">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${bugungiTashxislar}">0</h3>
+                        <p>Bugungi Bemorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon total-patients">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiBemorlar}">0</h3>
+                        <p>Jami Bemorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>15%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon appointments">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>12</h3>
+                        <p>Keyingi Qabullar</p>
+                    </div>
+                    <div class="stat-trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon rating">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${doktor.reyting}">5.0</h3>
+                        <p>Reyting</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>0.2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asosiy kontent -->
+            <div class="content-grid">
+                <!-- Bugungi navbat -->
+                <div class="today-schedule">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Bugungi Navbat</h3>
+                            <div class="schedule-actions">
+                                <button class="btn btn-sm btn-outline" onclick="openModal('addAppointmentModal')">
+                                    <i class="fas fa-plus"></i>
+                                    Qo'shish
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="refreshSchedule()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Yangilash
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="schedule-list">
+                                <div class="schedule-item urgent">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Ali Valiyev</h4>
+                                            <p>Terapiya • 25 yosh</p>
+                                            <span class="patient-note">Shoshilinch holat</span>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">09:00</span>
+                                        <span class="date">Bugun</span>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <button class="btn btn-sm btn-success" onclick="startAppointment(1)">
+                                            <i class="fas fa-play"></i>
+                                            Boshlash
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="schedule-item">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Sevara Alimova</h4>
+                                            <p>Konsultatsiya • 32 yosh</p>
+                                            <span class="patient-note">Qayta ko'rik</span>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">09:30</span>
+                                        <span class="date">Bugun</span>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <button class="btn btn-sm btn-outline" onclick="viewPatient(2)">
+                                            <i class="fas fa-eye"></i>
+                                            Ko'rish
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="schedule-item">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Javohir Rahimov</h4>
+                                            <p>Tekshiruv • 45 yosh</p>
+                                            <span class="patient-note">Yillik tekshiruv</span>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">10:15</span>
+                                        <span class="date">Bugun</span>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <button class="btn btn-sm btn-outline" onclick="viewPatient(3)">
+                                            <i class="fas fa-eye"></i>
+                                            Ko'rish
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="schedule-item completed">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Dilnoza Xasanova</h4>
+                                            <p>Diagnostika • 28 yosh</p>
+                                            <span class="patient-note">Yakunlangan</span>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">08:30</span>
+                                        <span class="date">Bugun</span>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <button class="btn btn-sm btn-outline" onclick="viewMedicalRecord(4)">
+                                            <i class="fas fa-file-medical"></i>
+                                            Yozuv
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doktor ma'lumotlari va tezkor amallar -->
+                <div class="doctor-sidebar">
+                    <!-- Doktor profili -->
+                    <div class="card doctor-profile">
+                        <div class="card-header">
+                            <h3>Profil Ma'lumotlari</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-info">
+                                <div class="profile-avatar">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="profile-details">
+                                    <h4 th:text="${doktor.ism + ' ' + doktor.familiya}">Doktor Ismi</h4>
+                                    <p class="specialty" th:text="${doktor.mutaxassislik}">Mutaxassislik</p>
+                                    <p class="experience" th:text="'Tajriba: ' + ${doktor.ishTajribasi} + ' yil'">Tajriba: 5 yil</p>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <span class="rating-value" th:text="${doktor.reyting}">4.5</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-stats">
+                                <div class="stat">
+                                    <span class="number" th:text="${jamiBemorlar}">156</span>
+                                    <span class="label">Jami Bemorlar</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="number">94%</span>
+                                    <span class="label">Mijozlar Qoniqishi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tezkor amallar -->
+                    <div class="card quick-actions">
+                        <div class="card-header">
+                            <h3>Tezkor Amallar</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="actions-list">
+                                <a th:href="@{/doktor/tashxis}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-stethoscope"></i>
+                                    </div>
+                                    <span>Yangi Tashxis</span>
+                                </a>
+                                
+                                <a th:href="@{/doktor/retsept}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-prescription"></i>
+                                    </div>
+                                    <span>Retsept Yozish</span>
+                                </a>
+                                
+                                <a th:href="@{/doktor/bemorlarim}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-injured"></i>
+                                    </div>
+                                    <span>Bemorlarim</span>
+                                </a>
+                                
+                                <a th:href="@{/doktor/navbat}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <span>Navbat Jadvali</span>
+                                </a>
+                                
+                                <a href="#" class="action-item" onclick="openModal('labResultsModal')">
+                                    <div class="action-icon">
+                                        <i class="fas fa-vial"></i>
+                                    </div>
+                                    <span>Lab Natijalari</span>
+                                </a>
+                                
+                                <a th:href="@{/doktor/profil}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-cog"></i>
+                                    </div>
+                                    <span>Profil Sozlamalari</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oxirgi tashxislar -->
+            <div class="recent-diagnoses">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Oxirgi Tashxislar</h3>
+                        <a th:href="@{/doktor/bemorlarim}" class="view-all">Hammasini Ko'rish</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="diagnoses-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Bemor</th>
+                                        <th>Tashxis</th>
+                                        <th>Sana</th>
+                                        <th>Holat</th>
+                                        <th>Amallar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="patient-cell">
+                                                <div class="patient-avatar-sm">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="patient-name">Ali Valiyev</div>
+                                                    <div class="patient-age">25 yosh</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="diagnosis-info">
+                                                <strong>Grip</strong>
+                                                <div class="diagnosis-desc">O'tkir nafas olish yo'llari infektsiyasi</div>
+                                            </div>
+                                        </td>
+                                        <td>15.12.2024</td>
+                                        <td>
+                                            <span class="badge badge-success">Yakunlangan</span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-outline" onclick="viewDiagnosis(1)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="editDiagnosis(1)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>
+                                            <div class="patient-cell">
+                                                <div class="patient-avatar-sm">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="patient-name">Sevara Alimova</div>
+                                                    <div class="patient-age">32 yosh</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="diagnosis-info">
+                                                <strong>Gipertoniya</strong>
+                                                <div class="diagnosis-desc">1-daraja arterial gipertenziya</div>
+                                            </div>
+                                        </td>
+                                        <td>14.12.2024</td>
+                                        <td>
+                                            <span class="badge badge-warning">Davom etmoqda</span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-outline" onclick="viewDiagnosis(2)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="editDiagnosis(2)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ish jadvali -->
+            <div class="work-schedule">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Ish Jadvali</h3>
+                        <button class="btn btn-sm btn-primary" onclick="openModal('scheduleSettingsModal')">
+                            <i class="fas fa-cog"></i>
+                            Sozlamalar
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="schedule-calendar">
+                            <div class="calendar-header">
+                                <button class="nav-btn" onclick="prevWeek()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h4 id="currentWeek">16-22 Dekabr 2024</h4>
+                                <button class="nav-btn" onclick="nextWeek()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="week-schedule">
+                                <div class="day-slot">
+                                    <div class="day-header">Dushanba</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot available">09:00 - 13:00</div>
+                                        <div class="time-slot break">13:00 - 14:00</div>
+                                        <div class="time-slot available">14:00 - 18:00</div>
+                                    </div>
+                                </div>
+                                <div class="day-slot">
+                                    <div class="day-header">Seshanba</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot available">09:00 - 13:00</div>
+                                        <div class="time-slot break">13:00 - 14:00</div>
+                                        <div class="time-slot available">14:00 - 18:00</div>
+                                    </div>
+                                </div>
+                                <div class="day-slot">
+                                    <div class="day-header">Chorshanba</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot available">09:00 - 13:00</div>
+                                        <div class="time-slot break">13:00 - 14:00</div>
+                                        <div class="time-slot available">14:00 - 18:00</div>
+                                    </div>
+                                </div>
+                                <div class="day-slot">
+                                    <div class="day-header">Payshanba</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot available">09:00 - 13:00</div>
+                                        <div class="time-slot break">13:00 - 14:00</div>
+                                        <div class="time-slot available">14:00 - 18:00</div>
+                                    </div>
+                                </div>
+                                <div class="day-slot">
+                                    <div class="day-header">Juma</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot available">09:00 - 13:00</div>
+                                        <div class="time-slot break">13:00 - 14:00</div>
+                                        <div class="time-slot available">14:00 - 18:00</div>
+                                    </div>
+                                </div>
+                                <div class="day-slot weekend">
+                                    <div class="day-header">Shanba</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot unavailable">Dam olish kuni</div>
+                                    </div>
+                                </div>
+                                <div class="day-slot weekend">
+                                    <div class="day-header">Yakshanba</div>
+                                    <div class="time-slots">
+                                        <div class="time-slot unavailable">Dam olish kuni</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal oynalar -->
+    <div id="addAppointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yangi Qabul Qo'shish</h3>
+                <button class="modal-close" onclick="closeModal('addAppointmentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label class="form-label">Bemor</label>
+                        <select class="form-control" name="patientId" required>
+                            <option value="">Bemorni tanlang</option>
+                            <option value="1">Ali Valiyev</option>
+                            <option value="2">Sevara Alimova</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sana va Vaqt</label>
+                        <input type="datetime-local" class="form-control" name="appointmentTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sabab</label>
+                        <textarea class="form-control" name="reason" rows="3" placeholder="Qabul sababi..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addAppointmentModal')">Bekor Qilish</button>
+                <button class="btn btn-primary" onclick="addAppointment()">Qo'shish</button>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/doktor.js}"></script>
+    <script>
+        function startAppointment(appointmentId) {
+            window.location.href = `/doktor/tashxis?appointmentId=${appointmentId}`;
+        }
+
+        function viewPatient(patientId) {
+            window.location.href = `/doktor/bemorlarim?patientId=${patientId}`;
+        }
+
+        function viewMedicalRecord(recordId) {
+            window.location.href = `/doktor/tashxis/${recordId}`;
+        }
+
+        function refreshSchedule() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showSuccess('Navbat yangilandi');
+            }, 1000);
+        }
+
+        function addAppointment() {
+            const form = document.getElementById('appointmentForm');
+            if (!validateForm(form)) return;
+
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showSuccess('Qabul muvaffaqiyatli qo\'shildi');
+                closeModal('addAppointmentModal');
+                form.reset();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

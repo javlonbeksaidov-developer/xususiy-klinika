@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qabulxona Dashboard - As-Salom Klinikasi</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/qabulxona.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="dashboard-container">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Qabulxona Boshqaruvi</h1>
+                <div class="breadcrumb">
+                    <span>Qabulxona</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="active">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Qabulxona statistik kartalari -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon today-patients">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="todayPatients">0</h3>
+                        <p>Bugungi Bemorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon waiting">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="waitingPatients">0</h3>
+                        <p>Kutayotgan Bemorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="todayRevenue">0</h3>
+                        <p>Bugungi Daromad</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon doctors">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeDoctors">0</h3>
+                        <p>Faol Doktorlar</p>
+                    </div>
+                    <div class="stat-trend neutral">
+                        <i class="fas fa-minus"></i>
+                        <span>0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asosiy kontent -->
+            <div class="content-grid">
+                <!-- Kutish ro'yxati -->
+                <div class="waiting-list-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Joriy Kutish Ro'yxati</h3>
+                            <div class="queue-actions">
+                                <button class="btn btn-sm btn-primary" onclick="callNextPatient()">
+                                    <i class="fas fa-bullhorn"></i>
+                                    Keyingi Bemor
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="refreshQueue()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Yangilash
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="queue-info">
+                                <div class="current-patient" id="currentPatient">
+                                    <div class="current-label">Hozirgi Bemor:</div>
+                                    <div class="patient-name">-</div>
+                                    <div class="doctor-name">-</div>
+                                </div>
+                                <div class="next-patient" id="nextPatient">
+                                    <div class="next-label">Keyingi Bemor:</div>
+                                    <div class="patient-name">-</div>
+                                    <div class="doctor-name">-</div>
+                                </div>
+                            </div>
+                            
+                            <div class="waiting-list">
+                                <div class="waiting-header">
+                                    <span>Navbat Ro'yxati</span>
+                                    <span class="waiting-count" id="waitingCount">0 kishi</span>
+                                </div>
+                                <div class="waiting-items" id="waitingItems">
+                                    <!-- Waiting items will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tezkor amallar -->
+                <div class="quick-actions-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Tezkor Amallar</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="actions-grid">
+                                <a th:href="@{/qabulxona/bemor-qoshish}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <span>Yangi Bemor</span>
+                                </a>
+                                
+                                <a th:href="@{/qabulxona/tulov}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <span>To'lov Qabul Qilish</span>
+                                </a>
+                                
+                                <a th:href="@{/qabulxona/bemorlar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-list"></i>
+                                    </div>
+                                    <span>Bemorlar Ro'yxati</span>
+                                </a>
+                                
+                                <a th:href="@{/qabulxona/sms}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-sms"></i>
+                                    </div>
+                                    <span>SMS Yuborish</span>
+                                </a>
+                                
+                                <a href="#" class="action-item" onclick="openModal('appointmentModal')">
+                                    <div class="action-icon">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </div>
+                                    <span>Qabul Bron Qilish</span>
+                                </a>
+                                
+                                <a href="#" class="action-item" onclick="generateDailyReport()">
+                                    <div class="action-icon">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </div>
+                                    <span>Kunlik Hisobot</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doktorlar holati -->
+                    <div class="card doctors-status">
+                        <div class="card-header">
+                            <h3>Doktorlar Holati</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="doctors-list" id="doctorsList">
+                                <!-- Doctors status will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oxirgi qo'shilgan bemorlar -->
+            <div class="recent-patients">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Oxirgi Qo'shilgan Bemorlar</h3>
+                        <a th:href="@{/qabulxona/bemorlar}" class="view-all">Hammasini Ko'rish</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="patients-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Bemor</th>
+                                        <th>Telefon</th>
+                                        <th>Qayd Raqami</th>
+                                        <th>Qo'shilgan Vaqt</th>
+                                        <th>Holat</th>
+                                        <th>Amallar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentPatientsTable">
+                                    <!-- Recent patients will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bugungi to'lovlar -->
+            <div class="today-payments">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Bugungi To'lovlar</h3>
+                        <div class="payment-summary">
+                            <span class="total-amount">Jami: <strong id="totalAmount">0 so'm</strong></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="payments-list" id="todayPayments">
+                            <!-- Today payments will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal oynalar -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yangi Qabul Bron Qilish</h3>
+                <button class="modal-close" onclick="closeModal('appointmentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label class="form-label">Bemor</label>
+                        <select class="form-control" name="patientId" id="patientSelect" required>
+                            <option value="">Bemorni tanlang</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Doktor</label>
+                        <select class="form-control" name="doctorId" id="doctorSelect" required>
+                            <option value="">Doktorni tanlang</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sana va Vaqt</label>
+                        <input type="datetime-local" class="form-control" name="appointmentTime" id="appointmentTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Xizmat Turi</label>
+                        <select class="form-control" name="serviceType" required>
+                            <option value="">Xizmat turini tanlang</option>
+                            <option value="CONSULTATION">Konsultatsiya</option>
+                            <option value="CHECKUP">Tekshiruv</option>
+                            <option value="PROCEDURE">Protsedura</option>
+                            <option value="TEST">Tahlil</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Izoh</label>
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Qo'shimcha izohlar..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('appointmentModal')">Bekor Qilish</button>
+                <button class="btn btn-primary" onclick="createAppointment()">Bron Qilish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Patient Modal -->
+    <div id="callPatientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bemorni Chaqirish</h3>
+                <button class="modal-close" onclick="closeModal('callPatientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="call-patient-info">
+                    <div class="call-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="call-details">
+                        <h4 id="calledPatientName">-</h4>
+                        <p>Doktor: <span id="calledDoctorName">-</span></p>
+                        <p>Xona: <span id="calledRoomNumber">-</span></p>
+                    </div>
+                </div>
+                <div class="call-actions">
+                    <button class="btn btn-success btn-lg" onclick="announcePatient()">
+                        <i class="fas fa-volume-up"></i>
+                        E'lon Qilish
+                    </button>
+                    <button class="btn btn-outline" onclick="skipPatient()">
+                        <i class="fas fa-forward"></i>
+                        O'tkazib Yuborish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/qabulxona.js}"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            startRealTimeUpdates();
+        });
+
+        function loadDashboardData() {
+            loadWaitingQueue();
+            loadRecentPatients();
+            loadTodayPayments();
+            loadDoctorsStatus();
+            loadStats();
+        }
+
+        function startRealTimeUpdates() {
+            // Update every 30 seconds
+            setInterval(loadDashboardData, 30000);
+            
+            // WebSocket for real-time updates
+            initQueueWebSocket();
+        }
+
+        function initQueueWebSocket() {
+            // WebSocket connection for real-time queue updates
+            console.log('Queue WebSocket initialized');
+        }
+    </script>
+</body>
+</html>

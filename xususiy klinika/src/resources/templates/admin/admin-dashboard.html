@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - As-Salom Klinikasi</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/admin.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="dashboard-container">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Admin Dashboard</h1>
+                <div class="breadcrumb">
+                    <span>Admin</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="active">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Statistik kartalar -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total-users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiFoydalanuvchilar}">0</h3>
+                        <p>Jami Foydalanuvchilar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>15%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon doctors">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${doktorlarSoni}">0</h3>
+                        <p>Faol Doktorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon patients">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${bemorlarSoni}">0</h3>
+                        <p>Ro'yxatdan O'tgan Bemorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>22%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>12.5M</h3>
+                        <p>Oylik Daromad</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ikkinchi qator statistikalar -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon appointments">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>156</h3>
+                        <p>Bugungi Qabullar</p>
+                    </div>
+                    <div class="stat-trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>5%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon staff">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${qabulxonaSoni}">0</h3>
+                        <p>Qabulxona Xodimlari</p>
+                    </div>
+                    <div class="stat-trend neutral">
+                        <i class="fas fa-minus"></i>
+                        <span>0%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon rooms">
+                        <i class="fas fa-door-open"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>24</h3>
+                        <p>Faol Xonalar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>3%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon satisfaction">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>94%</h3>
+                        <p>Mijozlar Qoniqishi</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>2%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart va jadval qismi -->
+            <div class="content-grid">
+                <div class="chart-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Oylik Bemorlar Oqimi</h3>
+                            <select class="chart-filter">
+                                <option>Oxirgi 6 oy</option>
+                                <option>Oxirgi 1 yil</option>
+                                <option>Oxirgi 2 yil</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Bemorlar statistikasi grafigi</p>
+                                <canvas id="patientsChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Tezkor Amallar</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="actions-grid">
+                                <a th:href="@{/admin/users/new}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <span>Yangi Foydalanuvchi</span>
+                                </a>
+                                
+                                <a th:href="@{/admin/doktorlar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <span>Doktorlarni Boshqarish</span>
+                                </a>
+                                
+                                <a th:href="@{/admin/bemorlar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-injured"></i>
+                                    </div>
+                                    <span>Bemorlar Ro'yxati</span>
+                                </a>
+                                
+                                <a th:href="@{/admin/statistika}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <span>Batafsil Statistika</span>
+                                </a>
+                                
+                                <a th:href="@{/admin/sozlamalar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-cogs"></i>
+                                    </div>
+                                    <span>Tizim Sozlamalari</span>
+                                </a>
+                                
+                                <a href="#" class="action-item" onclick="openModal('backupModal')">
+                                    <div class="action-icon">
+                                        <i class="fas fa-database"></i>
+                                    </div>
+                                    <span>Ma'lumotlarni Backup</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oxirgi faollik va yangi ro'yxatdan o'tganlar -->
+            <div class="content-grid">
+                <div class="recent-activity">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Oxirgi Faollik</h3>
+                            <a href="#" class="view-all">Hammasini Ko'rish</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon success">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-details">
+                                        <p><strong>Yangi bemor</strong> ro'yxatdan o'tdi</p>
+                                        <span class="activity-time">5 daqiqa oldin</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon primary">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="activity-details">
+                                        <p><strong>Dr. Aziza Karimova</strong> yangi qabul qo'shdi</p>
+                                        <span class="activity-time">30 daqiqa oldin</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="activity-details">
+                                        <p><strong>Tizim yangilandi</strong> versiya 1.2.1</p>
+                                        <span class="activity-time">2 soat oldin</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon info">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    </div>
+                                    <div class="activity-details">
+                                        <p><strong>To'lov qabul qilindi</strong> 250,000 so'm</p>
+                                        <span class="activity-time">4 soat oldin</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="new-registrations">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Yangi Ro'yxatdan O'tganlar</h3>
+                            <a th:href="@{/admin/bemorlar}" class="view-all">Hammasini Ko'rish</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="registrations-list">
+                                <div class="registration-item">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-details">
+                                        <h4>Dilshod Rajabov</h4>
+                                        <p>+998901234567</p>
+                                        <span class="registration-time">Bugun, 14:30</span>
+                                    </div>
+                                    <div class="user-role">
+                                        <span class="badge badge-success">BEMOR</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="registration-item">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="user-details">
+                                        <h4>Dr. Malika Ismoilova</h4>
+                                        <p>+998901234568</p>
+                                        <span class="registration-time">Bugun, 12:15</span>
+                                    </div>
+                                    <div class="user-role">
+                                        <span class="badge badge-primary">DOKTOR</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="registration-item">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div class="user-details">
+                                        <h4>Sanobar Xolmirzayeva</h4>
+                                        <p>+998901234569</p>
+                                        <span class="registration-time">Kecha, 18:45</span>
+                                    </div>
+                                    <div class="user-role">
+                                        <span class="badge badge-info">QABULXONA</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tizim holati -->
+            <div class="system-status">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Tizim Holati</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="status-grid">
+                            <div class="status-item online">
+                                <div class="status-indicator"></div>
+                                <div class="status-info">
+                                    <h4>Asosiy Server</h4>
+                                    <p>Ishlayapti</p>
+                                </div>
+                            </div>
+                            
+                            <div class="status-item online">
+                                <div class="status-indicator"></div>
+                                <div class="status-info">
+                                    <h4>Ma'lumotlar Bazasi</h4>
+                                    <p>Ishlayapti</p>
+                                </div>
+                            </div>
+                            
+                            <div class="status-item warning">
+                                <div class="status-indicator"></div>
+                                <div class="status-info">
+                                    <h4>SMS Xizmati</h4>
+                                    <p>Cheklangan</p>
+                                </div>
+                            </div>
+                            
+                            <div class="status-item online">
+                                <div class="status-indicator"></div>
+                                <div class="status-info">
+                                    <h4>To'lov Tizimi</h4>
+                                    <p>Ishlayapti</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Backup Modal -->
+    <div id="backupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ma'lumotlarni Backup Qilish</h3>
+                <button class="modal-close" onclick="closeModal('backupModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Ma'lumotlar bazasining zaxira nusxasini yaratmoqchimisiz?</p>
+                <div class="backup-options">
+                    <label class="checkbox">
+                        <input type="checkbox" checked>
+                        <span>Foydalanuvchi ma'lumotlari</span>
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" checked>
+                        <span>Bemorlar ma'lumotlari</span>
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" checked>
+                        <span>Tibbiy yozuvlar</span>
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox">
+                        <span>To'lov tarixi</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('backupModal')">Bekor Qilish</button>
+                <button class="btn btn-primary" onclick="createBackup()">Backup Yaratish</button>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/admin.js}"></script>
+    <script>
+        function createBackup() {
+            showLoading();
+            // Backup logikasi
+            setTimeout(() => {
+                hideLoading();
+                showSuccess('Backup muvaffaqiyatli yaratildi!');
+                closeModal('backupModal');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

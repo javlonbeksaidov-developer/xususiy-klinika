@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:fragment="header">
+        <div class="header-top">
+            <div class="header-left">
+                <img src="/images/logo.png" alt="Logo" class="logo">
+                <span class="clinic-name">Xususiy Klinika</span>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span th:text="${user.name}">Foydalanuvchi</span>
+                    <div class="user-role" th:text="${user.role}">ROLE</div>
+                </div>
+                <a href="/logout" class="logout-btn">Chiqish</a>
+            </div>
+        </div>
+    </header>
+</body>
+</html>

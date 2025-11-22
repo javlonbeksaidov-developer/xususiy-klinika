@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz" fragment="navbar">
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <img th:src="@{/images/logo.png}" alt="Klinika Logosi" class="navbar-logo">
+            <span class="navbar-title">As-Salom Klinikasi</span>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a th:href="@{/dashboard}" class="navbar-item">
+                    <i class="fas fa-home"></i>
+                    Asosiy
+                </a>
+                
+                <!-- Admin uchun menyu -->
+                <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="navbar-dropdown">
+                    <a href="#" class="navbar-item">
+                        <i class="fas fa-cogs"></i>
+                        Admin
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a th:href="@{/admin/users}" class="dropdown-item">
+                            <i class="fas fa-users"></i>
+                            Foydalanuvchilar
+                        </a>
+                        <a th:href="@{/admin/doktorlar}" class="dropdown-item">
+                            <i class="fas fa-user-md"></i>
+                            Doktorlar
+                        </a>
+                        <a th:href="@{/admin/bemorlar}" class="dropdown-item">
+                            <i class="fas fa-user-injured"></i>
+                            Bemorlar
+                        </a>
+                        <a th:href="@{/admin/statistika}" class="dropdown-item">
+                            <i class="fas fa-chart-bar"></i>
+                            Statistika
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Doktor uchun menyu -->
+                <div th:if="${#authorization.expression('hasRole(''DOKTOR'')')}" class="navbar-dropdown">
+                    <a href="#" class="navbar-item">
+                        <i class="fas fa-user-md"></i>
+                        Doktor
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a th:href="@{/doktor/dashboard}" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                        <a th:href="@{/doktor/bemorlarim}" class="dropdown-item">
+                            <i class="fas fa-user-injured"></i>
+                            Mening Bemorlarim
+                        </a>
+                        <a th:href="@{/doktor/tashxis}" class="dropdown-item">
+                            <i class="fas fa-stethoscope"></i>
+                            Tashxis Qo'yish
+                        </a>
+                        <a th:href="@{/doktor/navbat}" class="dropdown-item">
+                            <i class="fas fa-clock"></i>
+                            Navbat Jadvali
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Qabulxona uchun menyu -->
+                <div th:if="${#authorization.expression('hasRole(''QABULXONA'')')}" class="navbar-dropdown">
+                    <a href="#" class="navbar-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        Qabulxona
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a th:href="@{/qabulxona/dashboard}" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                        <a th:href="@{/qabulxona/bemor-qoshish}" class="dropdown-item">
+                            <i class="fas fa-user-plus"></i>
+                            Bemor Qo'shish
+                        </a>
+                        <a th:href="@{/qabulxona/bemorlar}" class="dropdown-item">
+                            <i class="fas fa-list"></i>
+                            Bemorlar Ro'yxati
+                        </a>
+                        <a th:href="@{/qabulxona/tulov}" class="dropdown-item">
+                            <i class="fas fa-credit-card"></i>
+                            To'lov Qabul Qilish
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Bemor uchun menyu -->
+                <div th:if="${#authorization.expression('hasRole(''BEMOR'')')}" class="navbar-dropdown">
+                    <a href="#" class="navbar-item">
+                        <i class="fas fa-user-injured"></i>
+                        Bemor
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a th:href="@{/bemor/dashboard}" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Shaxsiy Kabinet
+                        </a>
+                        <a th:href="@{/bemor/doktorlar}" class="dropdown-item">
+                            <i class="fas fa-user-md"></i>
+                            Doktorlar
+                        </a>
+                        <a th:href="@{/bemor/qabul-bron}" class="dropdown-item">
+                            <i class="fas fa-calendar-check"></i>
+                            Onlayn Qabul
+                        </a>
+                        <a th:href="@{/bemor/narxlar}" class="dropdown-item">
+                            <i class="fas fa-tag"></i>
+                            Xizmat Narxlari
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-user">
+                    <div class="user-info">
+                        <span class="user-name" th:text="${#authentication.principal.toliqIsm}">Foydalanuvchi</span>
+                        <span class="user-role" th:text="${#authentication.principal.role}">Role</span>
+                    </div>
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-dropdown">
+                        <a th:href="@{/profil}" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            Profil
+                        </a>
+                        <a th:href="@{/auth/logout}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Chiqish
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Navbar toggle for mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbarToggle = document.querySelector('.navbar-toggle');
+        const navbarMenu = document.querySelector('.navbar-menu');
+        
+        navbarToggle.addEventListener('click', function() {
+            navbarMenu.classList.toggle('active');
+        });
+
+        // Dropdown menus
+        const dropdowns = document.querySelectorAll('.navbar-dropdown');
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function() {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        });
+    });
+</script>
+</html>

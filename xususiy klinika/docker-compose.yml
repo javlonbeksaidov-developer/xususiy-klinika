@@ -1,0 +1,220 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql-db:
+    image: mysql:8.0
+    container_name: klinika-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-klinika_db}
+      MYSQL_USER: ${DB_USER:-klinika_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-klinika_password}
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/backup:/backup
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb_buffer_pool_size=256M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootpassword}"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+    networks:
+      - klinika-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: klinika-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      timeout: 10s
+      retries: 5
+    networks:
+      - klinika-network
+
+  # Spring Boot Application
+  klinika-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: klinika-application
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/${DB_NAME:-klinika_db}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-klinika_user}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-klinika_password}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+      SPRING_REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_key_here}
+      SMS_API_KEY: ${SMS_API_KEY:-your_sms_api_key}
+      SMS_API_SECRET: ${SMS_API_SECRET:-your_sms_api_secret}
+      PAYMENT_MERCHANT_ID: ${PAYMENT_MERCHANT_ID:-your_merchant_id}
+      PAYMENT_MERCHANT_KEY: ${PAYMENT_MERCHANT_KEY:-your_merchant_key}
+      JAVA_OPTS: "-Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.security.egd=file:/dev/./urandom"
+    ports:
+      - "8080:8080"
+      - "8081:8081"  # Actuator port
+    volumes:
+      - app_logs:/app/logs
+      - app_uploads:/app/uploads
+      - ./application-prod.properties:/app/config/application-prod.properties:ro
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - klinika-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.klinika.rule=Host(`klinika.local`)"
+      - "traefik.http.services.klinika.loadbalancer.server.port=8080"
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:1.24-alpine
+    container_name: klinika-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - klinika-app
+    networks:
+      - klinika-network
+    labels:
+      - "traefik.enable=false"
+
+  # Adminer - Database Management
+  adminer:
+    image: adminer:4.8
+    container_name: klinika-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql-db
+      ADMINER_DEFAULT_USERNAME: ${DB_USER:-klinika_user}
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql-db
+    networks:
+      - klinika-network
+
+  # Redis Commander - Redis Management
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: klinika-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD:-redis_password}
+    ports:
+      - "8083:8081"
+    depends_on:
+      - redis
+    networks:
+      - klinika-network
+
+  # Elasticsearch for Logging (Optional)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    container_name: klinika-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - klinika-network
+
+  # Logstash (Optional)
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.9.0
+    container_name: klinika-logstash
+    restart: unless-stopped
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - klinika-network
+
+  # Kibana (Optional)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.9.0
+    container_name: klinika-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - klinika-network
+
+  # Portainer - Container Management
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: klinika-portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - klinika-network
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_logs:
+    driver: local
+  app_uploads:
+    driver: local
+  nginx_logs:
+    driver: local
+  elasticsearch_data:
+    driver: local
+  portainer_data:
+    driver: local
+
+networks:
+  klinika-network:
+    driver: bridge
+    name: klinika-network

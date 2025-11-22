@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz" fragment="footer">
+<footer class="footer" th:fragment="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <div class="footer-logo">
+                <img th:src="@{/images/logo.png}" alt="As-Salom Klinikasi" class="footer-logo-img">
+                <h3>As-Salom Klinikasi</h3>
+            </div>
+            <p class="footer-description">
+                Sog'lig'ingiz - bizning ishonchimiz. Eng zamonaviy usullar va tajribali shifokorlar 
+                bilan sizga sifatli tibbiy xizmat ko'rsatamiz.
+            </p>
+            <div class="social-links">
+                <a href="#" class="social-link">
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-title">Tezkor Havolalar</h4>
+            <ul class="footer-links">
+                <li><a th:href="@{/bemor/doktorlar}">Doktorlar</a></li>
+                <li><a th:href="@{/bemor/narxlar}">Xizmat Narxlari</a></li>
+                <li><a th:href="@{/bemor/qabul-bron}">Onlayn Qabul</a></li>
+                <li><a th:href="@{/yordam}">Ko'p So'raladigan Savollar</a></li>
+                <li><a th:href="@{/aloqa}">Aloqa</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-title">Xizmatlar</h4>
+            <ul class="footer-links">
+                <li><a href="#">Terapiya</a></li>
+                <li><a href="#">Kardiologiya</a></li>
+                <li><a href="#">Nevrologiya</a></li>
+                <li><a href="#">Pediatriya</a></li>
+                <li><a href="#">Stomatologiya</a></li>
+                <li><a href="#">Diagnostika</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-title">Aloqa Ma'lumotlari</h4>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Toshkent shahar, Yunusobod tumani, 12-uy</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+998 (78) 123-45-67</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>info@assalom-klinika.uz</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Dushanba - Shanba: 09:00 - 18:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-title">Shoshilinch Yarim</h4>
+            <div class="emergency-contact">
+                <div class="emergency-number">
+                    <i class="fas fa-ambulance"></i>
+                    <span class="emergency-text">103</span>
+                </div>
+                <p class="emergency-description">
+                    Shoshilinch tibbiy yordam uchun bepul qo'ng'iroq qiling
+                </p>
+                <button class="emergency-btn">
+                    <i class="fas fa-phone-alt"></i>
+                    Qo'ng'iroq Qilish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="footer-bottom-content">
+            <div class="copyright">
+                <p>&copy; 2024 As-Salom Klinikasi. Barcha huquqlar himoyalangan.</p>
+            </div>
+            <div class="footer-bottom-links">
+                <a th:href="@{/maxfiylik}">Maxfiylik Siyosati</a>
+                <a th:href="@{/foydalanish-shartlari}">Foydalanish Shartlari</a>
+                <a th:href="@{/cookie}">Cookie Siyosati</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .footer {
+        background: #2c3e50;
+        color: #ecf0f1;
+        margin-top: auto;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 50px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer-section h4 {
+        color: #3498db;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .footer-logo-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .footer-logo h3 {
+        margin: 0;
+        color: #3498db;
+    }
+
+    .footer-description {
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #bdc3c7;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 10px;
+    }
+
+    .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #34495e;
+        color: white;
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .social-link:hover {
+        background: #3498db;
+        transform: translateY(-2px);
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 8px;
+    }
+
+    .footer-links a {
+        color: #bdc3c7;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+        color: #3498db;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        color: #bdc3c7;
+    }
+
+    .contact-item i {
+        color: #3498db;
+        width: 20px;
+    }
+
+    .emergency-contact {
+        text-align: center;
+        padding: 20px;
+        background: #c0392b;
+        border-radius: 10px;
+    }
+
+    .emergency-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .emergency-number i {
+        font-size: 1.5rem;
+    }
+
+    .emergency-text {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .emergency-description {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .emergency-btn {
+        background: white;
+        color: #c0392b;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .emergency-btn:hover {
+        background: #ecf0f1;
+        transform: translateY(-2px);
+    }
+
+    .footer-bottom {
+        background: #34495e;
+        padding: 20px 0;
+        border-top: 1px solid #2c3e50;
+    }
+
+    .footer-bottom-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .copyright p {
+        margin: 0;
+        color: #bdc3c7;
+    }
+
+    .footer-bottom-links {
+        display: flex;
+        gap: 20px;
+    }
+
+    .footer-bottom-links a {
+        color: #bdc3c7;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+    }
+
+    .footer-bottom-links a:hover {
+        color: #3498db;
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .footer-bottom-content {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .contact-item {
+            justify-content: center;
+        }
+    }
+</style>
+</html>

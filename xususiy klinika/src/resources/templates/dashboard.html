@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - As-Salom Klinikasi</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="dashboard-container">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Dashboard</h1>
+                <div class="breadcrumb">
+                    <span>Asosiy</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="active">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Statistik kartalar -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon patients">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiBemorlar}">0</h3>
+                        <p>Jami Bemorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon doctors">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiDoktorlar}">0</h3>
+                        <p>Faol Doktorlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon appointments">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${bugungiQabullar}">0</h3>
+                        <p>Bugungi Qabullar</p>
+                    </div>
+                    <div class="stat-trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${oylikDaromad}">0</h3>
+                        <p>Oylik Daromad</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart va jadval qismi -->
+            <div class="content-grid">
+                <div class="chart-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Bemorlar Oqimi</h3>
+                            <select class="chart-filter">
+                                <option>Oxirgi 7 kun</option>
+                                <option>Oxirgi 30 kun</option>
+                                <option>Oxirgi 3 oy</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Bemorlar statistikasi grafigi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Oxirgi Qabullar</h3>
+                            <a th:href="@{/qabullar}" class="view-all">Hammasini Ko'rish</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="appointments-list">
+                                <div class="appointment-item">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Ali Valiyev</h4>
+                                            <p>Terapevt</p>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">10:00</span>
+                                        <span class="date">15 Dek</span>
+                                    </div>
+                                    <div class="appointment-status confirmed">
+                                        Tasdiqlangan
+                                    </div>
+                                </div>
+
+                                <div class="appointment-item">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Sevara Alimova</h4>
+                                            <p>Kardiolog</p>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">11:30</span>
+                                        <span class="date">15 Dek</span>
+                                    </div>
+                                    <div class="appointment-status pending">
+                                        Kutilmoqda
+                                    </div>
+                                </div>
+
+                                <div class="appointment-item">
+                                    <div class="patient-info">
+                                        <div class="patient-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="patient-details">
+                                            <h4>Javohir Rahimov</h4>
+                                            <p>Nevrolog</p>
+                                        </div>
+                                    </div>
+                                    <div class="appointment-time">
+                                        <span class="time">14:00</span>
+                                        <span class="date">15 Dek</span>
+                                    </div>
+                                    <div class="appointment-status confirmed">
+                                        Tasdiqlangan
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doktorlar va bemorlar -->
+            <div class="content-grid">
+                <div class="doctors-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Top Doktorlar</h3>
+                            <a th:href="@{/doktorlar}" class="view-all">Hammasini Ko'rish</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="doctors-list">
+                                <div class="doctor-item">
+                                    <div class="doctor-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="doctor-details">
+                                        <h4>Dr. Aziza Karimova</h4>
+                                        <p>Kardiolog</p>
+                                        <div class="doctor-rating">
+                                            <i class="fas fa-star"></i>
+                                            <span>4.8</span>
+                                            <span class="experience">(5 yil tajriba)</span>
+                                        </div>
+                                    </div>
+                                    <div class="doctor-status available">
+                                        Mavjud
+                                    </div>
+                                </div>
+
+                                <div class="doctor-item">
+                                    <div class="doctor-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="doctor-details">
+                                        <h4>Dr. Shavkat Ismoilov</h4>
+                                        <p>Terapevt</p>
+                                        <div class="doctor-rating">
+                                            <i class="fas fa-star"></i>
+                                            <span>4.9</span>
+                                            <span class="experience">(8 yil tajriba)</span>
+                                        </div>
+                                    </div>
+                                    <div class="doctor-status busy">
+                                        Band
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="patients-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Yangi Bemorlar</h3>
+                            <a th:href="@{/bemorlar}" class="view-all">Hammasini Ko'rish</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="patients-list">
+                                <div class="patient-item">
+                                    <div class="patient-avatar">
+                                        <i class="fas fa-user-injured"></i>
+                                    </div>
+                                    <div class="patient-details">
+                                        <h4>Dilnoza Xasanova</h4>
+                                        <p>+998901234567</p>
+                                        <span class="registration-date">Bugun qo'shildi</span>
+                                    </div>
+                                </div>
+
+                                <div class="patient-item">
+                                    <div class="patient-avatar">
+                                        <i class="fas fa-user-injured"></i>
+                                    </div>
+                                    <div class="patient-details">
+                                        <h4>Farrux To'rayev</h4>
+                                        <p>+998901234568</p>
+                                        <span class="registration-date">Kecha qo'shildi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

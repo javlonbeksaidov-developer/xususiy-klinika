@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bemor Kabineti - As-Salom Klinikasi</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/bemor.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="dashboard-container">
+        <div th:replace="fragments/sidebar :: sidebar"></div>
+
+        <main class="main-content">
+            <div class="content-header">
+                <div class="patient-welcome">
+                    <h1>Xush kelibsiz, <span th:text="${bemor.ism + ' ' + bemor.familiya}">Bemor Ismi</span>!</h1>
+                    <p class="patient-id">Bemor ID: <span th:text="${bemor.qaydRaqami}">QR-001</span></p>
+                </div>
+                <div class="breadcrumb">
+                    <span>Bemor</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span class="active">Shaxsiy Kabinet</span>
+                </div>
+            </div>
+
+            <!-- Bemor statistik kartalari -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon appointments">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiQabullar}">0</h3>
+                        <p>Jami Qabullar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>2</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon prescriptions">
+                        <i class="fas fa-prescription"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiRetseptlar}">0</h3>
+                        <p>Retseptlar</p>
+                    </div>
+                    <div class="stat-trend neutral">
+                        <i class="fas fa-minus"></i>
+                        <span>0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon tests">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiTahlillar}">0</h3>
+                        <p>Tahlillar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>1</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon payments">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 th:text="${jamiTulovlar}">0</h3>
+                        <p>To'lovlar</p>
+                    </div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asosiy kontent -->
+            <div class="content-grid">
+                <!-- Keyingi qabullar -->
+                <div class="upcoming-appointments">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Keyingi Qabullar</h3>
+                            <a th:href="@{/bemor/qabul-bron}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Yangi Qabul
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="appointments-list" id="upcomingAppointments">
+                                <!-- Appointments will be populated by JavaScript -->
+                            </div>
+                            <div class="empty-state" id="noAppointments" style="display: none;">
+                                <i class="fas fa-calendar-times"></i>
+                                <p>Hozircha rejalashtirilgan qabullaringiz yo'q</p>
+                                <a th:href="@{/bemor/qabul-bron}" class="btn btn-primary">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Qabul Bron Qilish
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bemor profili -->
+                <div class="patient-profile-sidebar">
+                    <div class="card patient-profile">
+                        <div class="card-header">
+                            <h3>Profil Ma'lumotlari</h3>
+                            <a th:href="@{/bemor/profil}" class="btn btn-sm btn-outline">
+                                <i class="fas fa-edit"></i>
+                                Tahrirlash
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-info">
+                                <div class="profile-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="profile-details">
+                                    <h4 th:text="${bemor.ism + ' ' + bemor.familiya}">Bemor Ismi</h4>
+                                    <p class="patient-id" th:text="'ID: ' + ${bemor.qaydRaqami}">ID: QR-001</p>
+                                    <p class="patient-age" th:text="${bemor.yosh} + ' yosh'">30 yosh</p>
+                                    <p class="patient-blood" th:if="${bemor.qonGuruhi}" th:text="'Qon guruhi: ' + ${bemor.qonGuruhi}">Qon guruhi: A+</p>
+                                </div>
+                            </div>
+                            <div class="profile-contacts">
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span th:text="${bemor.telefon}">+998901234567</span>
+                                </div>
+                                <div class="contact-item" th:if="${bemor.email}">
+                                    <i class="fas fa-envelope"></i>
+                                    <span th:text="${bemor.email}">bemor@example.com</span>
+                                </div>
+                                <div class="contact-item" th:if="${bemor.manzil}">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span th:text="${bemor.manzil}">Toshkent shahar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tezkor amallar -->
+                    <div class="card quick-actions">
+                        <div class="card-header">
+                            <h3>Tezkor Amallar</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="actions-list">
+                                <a th:href="@{/bemor/doktorlar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <span>Doktorlar</span>
+                                </a>
+                                
+                                <a th:href="@{/bemor/tarix}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-history"></i>
+                                    </div>
+                                    <span>Davolanish Tarixi</span>
+                                </a>
+                                
+                                <a th:href="@{/bemor/tahlillar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-file-medical"></i>
+                                    </div>
+                                    <span>Tahlil Natijalari</span>
+                                </a>
+                                
+                                <a th:href="@{/bemor/narxlar}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-tag"></i>
+                                    </div>
+                                    <span>Xizmat Narxlari</span>
+                                </a>
+                                
+                                <a th:href="@{/bemor/tulov}" class="action-item">
+                                    <div class="action-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <span>To'lov Qilish</span>
+                                </a>
+                                
+                                <a href="#" class="action-item" onclick="openModal('supportModal')">
+                                    <div class="action-icon">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <span>Yordam</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oxirgi tibbiy yozuvlar -->
+            <div class="medical-records">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Oxirgi Tibbiy Yozuvlar</h3>
+                        <a th:href="@{/bemor/tarix}" class="view-all">Barchasini Ko'rish</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="records-list" id="medicalRecords">
+                            <!-- Medical records will be populated by JavaScript -->
+                        </div>
+                        <div class="empty-state" id="noRecords" style="display: none;">
+                            <i class="fas fa-file-medical-alt"></i>
+                            <p>Hozircha tibbiy yozuvingiz mavjud emas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retseptlar -->
+            <div class="prescriptions-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Oxirgi Retseptlar</h3>
+                        <a th:href="@{/bemor/retseptlar}" class="view-all">Barchasini Ko'rish</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="prescriptions-list" id="prescriptionsList">
+                            <!-- Prescriptions will be populated by JavaScript -->
+                        </div>
+                        <div class="empty-state" id="noPrescriptions" style="display: none;">
+                            <i class="fas fa-prescription-bottle"></i>
+                            <p>Hozircha retseptlaringiz mavjud emas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tahlil natijalari -->
+            <div class="lab-results">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Oxirgi Tahlil Natijalari</h3>
+                        <a th:href="@{/bemor/tahlillar}" class="view-all">Barchasini Ko'rish</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="lab-results-grid" id="labResults">
+                            <!-- Lab results will be populated by JavaScript -->
+                        </div>
+                        <div class="empty-state" id="noLabResults" style="display: none;">
+                            <i class="fas fa-vial"></i>
+                            <p>Hozircha tahlil natijalaringiz mavjud emas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal oynalar -->
+    <div id="appointmentDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Qabul Tafsilotlari</h3>
+                <button class="modal-close" onclick="closeModal('appointmentDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="appointment-details" id="appointmentDetails">
+                    <!-- Appointment details will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('appointmentDetailsModal')">Yopish</button>
+                <button class="btn btn-primary" onclick="rescheduleAppointment()">Qayta Rejalashtirish</button>
+                <button class="btn btn-danger" onclick="cancelAppointment()">Bekor Qilish</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yordam va Qo'llab-quvvatlash</h3>
+                <button class="modal-close" onclick="closeModal('supportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="support-options">
+                    <div class="support-item">
+                        <div class="support-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="support-info">
+                            <h4>Telefon Orqali</h4>
+                            <p>+998 (78) 123-45-67</p>
+                            <small>Ish vaqti: 09:00 - 18:00</small>
+                        </div>
+                    </div>
+                    
+                    <div class="support-item">
+                        <div class="support-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="support-info">
+                            <h4>Elektron Pochta</h4>
+                            <p>info@assalom-klinika.uz</p>
+                            <small>24 soat ichida javob beramiz</small>
+                        </div>
+                    </div>
+                    
+                    <div class="support-item">
+                        <div class="support-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="support-info">
+                            <h4>Onlayn Chat</h4>
+                            <p>Tezkor yordam</p>
+                            <small>Hozir mavjud</small>
+                        </div>
+                        <button class="btn btn-primary" onclick="startChat()">
+                            Chatni Boshlash
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shoshilinch yordam -->
+    <div class="emergency-floating">
+        <button class="emergency-btn" onclick="openEmergencyModal()">
+            <i class="fas fa-ambulance"></i>
+            Shoshilinch Yordam
+        </button>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/bemor.js}"></script>
+    <script>
+        // Initialize patient dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPatientData();
+            initNotifications();
+        });
+
+        function loadPatientData() {
+            loadUpcomingAppointments();
+            loadMedicalRecords();
+            loadPrescriptions();
+            loadLabResults();
+        }
+
+        function initNotifications() {
+            // Check for new results or appointments
+            checkForUpdates();
+            
+            // Setup periodic updates
+            setInterval(checkForUpdates, 300000); // 5 minutes
+        }
+
+        function checkForUpdates() {
+            fetch('/bemor/api/updates')
+                .then(response => response.json())
+                .then(updates => {
+                    if (updates.hasNewResults) {
+                        showNotification('Yangi tahlil natijalaringiz mavjud');
+                    }
+                    if (updates.upcomingAppointments) {
+                        showNotification('Ertangi kunga qabullingiz bor');
+                    }
+                })
+                .catch(error => console.error('Yangiliklarni tekshirishda xatolik:', error));
+        }
+
+        function showNotification(message) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('As-Salom Klinikasi', {
+                    body: message,
+                    icon: '/images/logo.png'
+                });
+            }
+        }
+
+        function openEmergencyModal() {
+            if (confirm('Shoshilinch tibbiy yordam kerakmi?\n\nAgar vaziyat jiddiy bo\'lsa, darhol 103 raqamiga qo\'ng\'iroq qiling.')) {
+                window.location.href = 'tel:103';
+            }
+        }
+
+        function startChat() {
+            // Online chat functionality
+            alert('Tez orada chat xizmati ishga tushadi');
+        }
+    </script>
+</body>
+</html>

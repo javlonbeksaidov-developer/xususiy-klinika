@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirish - As-Salom Klinikasi</title>
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img th:src="@{/images/logo.png}" alt="Klinika Logosi" class="logo">
+            <h1>As-Salom Klinikasi</h1>
+            <p>Tizimga xush kelibsiz</p>
+        </div>
+
+        <div class="login-form">
+            <form th:action="@{/auth/login}" method="post">
+                <div th:if="${param.error}" class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Telefon raqam yoki parol noto'g'ri!
+                </div>
+                
+                <div th:if="${param.logout}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    Siz tizimdan muvaffaqiyatli chiqdingiz!
+                </div>
+                
+                <div th:if="${success}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefon">
+                        <i class="fas fa-phone"></i>
+                        Telefon Raqam
+                    </label>
+                    <input type="tel" id="telefon" name="telefon" 
+                           placeholder="+998901234567" required
+                           pattern="\+998[0-9]{9}">
+                </div>
+
+                <div class="form-group">
+                    <label for="parol">
+                        <i class="fas fa-lock"></i>
+                        Parol
+                    </label>
+                    <input type="password" id="parol" name="parol" 
+                           placeholder="Parolingizni kiriting" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Tizimga Kirish
+                </button>
+
+                <div class="login-links">
+                    <a th:href="@{/auth/forgot-password}" class="link">
+                        <i class="fas fa-key"></i>
+                        Parolni unutdingizmi?
+                    </a>
+                    <a th:href="@{/auth/register}" class="link">
+                        <i class="fas fa-user-plus"></i>
+                        Ro'yxatdan o'tish
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <p>&copy; 2024 As-Salom Klinikasi. Barcha huquqlar himoyalangan.</p>
+            <p>Ish vaqti: 09:00 - 18:00 | Tel: +998781234567</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
